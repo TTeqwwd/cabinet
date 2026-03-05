@@ -1,9 +1,6 @@
 .git
 tests
 
-# Docker
-docker-compose.override.yml
-
 # Environment
 .env
 .env.local
