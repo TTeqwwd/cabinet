@@ -1,0 +1,86 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
+      target: production
+    environment:
+      APP_ENV: production
+      APP_DEBUG: false
+    command: php-fpm
+    user: "10001"
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - backend_storage:/app/storage
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+    networks:
+      - cabinet_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
+      target: production
+    environment:
+      VITE_API_URL: http://localhost
+    read_only: true
+    networks:
+      - cabinet_network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    read_only: true
+    networks:
+      - cabinet_network
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
+      target: production
+    command: php artisan queue:work --queue=default --sleep=3 --tries=3 --timeout=60
+    user: "10001"
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - backend_storage:/app/storage
+    networks:
+      - cabinet_network
+
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
+      target: production
+    command: php artisan schedule:work
+    user: "10001"
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - backend_storage:/app/storage
+    networks:
+      - cabinet_network
+
+networks:
+  cabinet_network:
+    driver: bridge
+
+volumes:
+  backend_storage:
