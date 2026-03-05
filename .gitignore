@@ -6,6 +6,7 @@ tests
 .env.local
 .env.*.local
 .env.secrets
+.env.development
 .env.production.local
 
 # Logs
