@@ -5,13 +5,11 @@ FROM php:8.4-cli-alpine AS development
 
 WORKDIR /var/www/html
 
-# System dependencies
 RUN apk add --no-cache \
     git curl bash libpng-dev libjpeg-turbo-dev freetype-dev \
     postgresql-dev zip unzip zlib-dev oniguruma-dev \
     autoconf g++ make pkgconfig
 
-# PHP extensions
 RUN docker-php-ext-configure gd \
         --with-freetype=/usr/include/freetype2 \
         --with-jpeg=/usr/include \
@@ -19,18 +17,19 @@ RUN docker-php-ext-configure gd \
     pdo_pgsql mbstring gd bcmath opcache \
  && apk del autoconf g++ make pkgconfig
 
-# Non-root user (UID matches host)
+COPY docker/backend-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 RUN addgroup -g 1000 app \
  && adduser -D -u 1000 -G app app
 
-# Switch to non-root user
 USER 1000
 
-# Expose dev server port
+WORKDIR /var/www/html
+
 EXPOSE 8000
 
-# Command: generate key if missing, then serve
-CMD ["sh", "-c", "if [ -z \"$(grep -v '^#' .env | grep APP_KEY | cut -d= -f2)\" ]; then php artisan key:generate --force; fi && php artisan serve --host=0.0.0.0 --port=8000"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # ============================================
 # Production Stage
