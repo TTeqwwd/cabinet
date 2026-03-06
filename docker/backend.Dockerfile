@@ -25,8 +25,6 @@ RUN addgroup -g 1000 app \
 
 USER 1000
 
-WORKDIR /var/www/html
-
 EXPOSE 8000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

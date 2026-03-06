@@ -3,24 +3,25 @@ set -e
 
 cd /var/www/html
 
-# создать директории Laravel если их нет
-mkdir -p storage/logs
-mkdir -p bootstrap/cache
-
-# исправить права
-chown -R app:app storage bootstrap/cache || true
+mkdir -p storage/logs bootstrap/cache
 chmod -R 775 storage bootstrap/cache || true
 
-# если нет .env
+# env
 if [ ! -f .env ]; then
   cp .env.development .env
 fi
 
-# если нет ключа
-if ! grep -q APP_KEY .env; then
+# key
+APP_KEY_VALUE=$(grep "^APP_KEY=" .env | cut -d '=' -f2)
+
+if [ -z "$APP_KEY_VALUE" ]; then
   php artisan key:generate
 fi
 
+# sessions table
+php artisan session:table || true
+
+# migrations
 php artisan migrate --force
 
 exec php artisan serve --host=0.0.0.0 --port=8000
