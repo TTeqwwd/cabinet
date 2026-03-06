@@ -7,7 +7,7 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
-      - ./backend:/var/www/html
+      - ./backend:/var/www/html # исходники с хоста
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     env_file: ./backend/.env.development
     command: >
@@ -55,11 +55,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          'sh -c ''pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"''',
-        ]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       retries: 5
     networks:
