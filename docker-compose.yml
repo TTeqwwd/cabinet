@@ -9,20 +9,12 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./backend:/var/www/html
-    env_file:
-      - .env.secrets
-      - ./backend/.env
     networks:
       - cabinet_network
     depends_on:
       - postgres
     expose:
       - "8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/up"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   frontend:
     build:
@@ -45,10 +37,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env.secrets
-    environment:
-      POSTGRES_USER: cabinet_user
-      POSTGRES_DB: cabinet
-      POSTGRES_PASSWORD: secret_password_here
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
