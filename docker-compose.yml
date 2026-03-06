@@ -1,12 +1,14 @@
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: ../docker/backend.Dockerfile
+      context: .
+      dockerfile: docker/backend.Dockerfile
       target: development
     container_name: cabinet_backend
     restart: unless-stopped
     working_dir: /var/www/html
+    env_file:
+      - ./backend/.env.development
     volumes:
       - ./backend:/var/www/html
     networks:
@@ -35,6 +37,7 @@ services:
     image: postgres:16-alpine
     container_name: cabinet_postgres
     restart: unless-stopped
+    env_file: ./backend/.env.development
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
