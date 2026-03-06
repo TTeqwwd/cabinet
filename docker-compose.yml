@@ -35,8 +35,6 @@ services:
     image: postgres:16-alpine
     container_name: cabinet_postgres
     restart: unless-stopped
-    env_file:
-      - .env.secrets
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
