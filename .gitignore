@@ -41,5 +41,6 @@ composer.lock
 /storage/logs/*
 /storage/app/public
 /cabinet
+/backend/cabinet/
 .env
 .env.development
