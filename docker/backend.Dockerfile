@@ -29,8 +29,8 @@ USER 1000
 # Expose dev server port
 EXPOSE 8000
 
-# Command: artisan serve for dev
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Command: generate key if missing, then serve
+CMD ["sh", "-c", "if [ -z \"$(grep -v '^#' .env | grep APP_KEY | cut -d= -f2)\" ]; then php artisan key:generate --force; fi && php artisan serve --host=0.0.0.0 --port=8000"]
 
 # ============================================
 # Production Stage
