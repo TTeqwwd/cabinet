@@ -19,15 +19,7 @@ services:
       - "8000"
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: ../docker/frontend.Dockerfile
-      target: development
     container_name: cabinet_frontend
-    restart: unless-stopped
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     networks:
       - cabinet_network
     expose:
@@ -37,7 +29,6 @@ services:
     image: postgres:16-alpine
     container_name: cabinet_postgres
     restart: unless-stopped
-    env_file: ./backend/.env.development
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -47,10 +38,6 @@ services:
     image: nginx:alpine
     container_name: cabinet_nginx
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:8080:80"
-    volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - cabinet_network
     depends_on:

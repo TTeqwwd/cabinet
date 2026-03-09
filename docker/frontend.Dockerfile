@@ -39,15 +39,3 @@ RUN addgroup -g 1001 -S nodejs \
 
 USER nodejs
 RUN npm run build
-
-# ============================================
-# Production Serve Stage (Nginx)
-# ============================================
-FROM nginx:1.25.4-alpine AS production
-
-# Копируем собранные файлы
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.prod.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]

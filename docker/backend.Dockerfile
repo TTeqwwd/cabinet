@@ -8,7 +8,8 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
     git curl bash libpng-dev libjpeg-turbo-dev freetype-dev \
     postgresql-dev zip unzip zlib-dev oniguruma-dev \
-    autoconf g++ make pkgconfig
+    autoconf g++ make pkgconfig \
+    postgresql-client
 
 RUN docker-php-ext-configure gd \
         --with-freetype=/usr/include/freetype2 \
@@ -41,7 +42,8 @@ RUN apk add --no-cache \
     libpng-dev libjpeg-turbo-dev freetype-dev \
     postgresql-dev zip unzip \
     bash zlib-dev oniguruma-dev \
-    autoconf g++ make pkgconfig
+    autoconf g++ make pkgconfig \
+    postgresql-client
 
 # PHP extensions
 RUN docker-php-ext-configure gd \
