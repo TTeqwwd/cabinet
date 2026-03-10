@@ -58,10 +58,13 @@ RUN addgroup -g 10001 app \
  && adduser -D -u 10001 -G app app
 
 # Copy source code
-COPY . .
+COPY backend /app
+COPY docker/scheduler-entrypoint.sh /app/docker/scheduler-entrypoint.sh
+COPY docker/worker-entrypoint.sh /app/docker/worker-entrypoint.sh
 
 # Fix ownership
 RUN chown -R app:app /app
+RUN chmod +x /app/docker/*.sh
 
 # Set user
 USER 10001

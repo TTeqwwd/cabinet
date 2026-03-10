@@ -20,6 +20,7 @@ fi
 
 # sessions table
 php artisan session:table || true
+php artisan cache:table || true
 
 # migrations
 php artisan migrate --force

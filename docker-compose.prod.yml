@@ -1,8 +1,8 @@
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: ../docker/backend.Dockerfile
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
       target: production
     env_file:
       - ./backend/.env
@@ -60,17 +60,10 @@ services:
 
   worker:
     build:
-      context: ./backend
-      dockerfile: ../docker/backend.Dockerfile
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
       target: production
-    command: >
-      sh -c "
-      until pg_isready -h postgres -p 5432 -U postgres; do
-        echo 'Waiting for postgres...';
-        sleep 2;
-      done;
-      php artisan queue:work --verbose --tries=3 --timeout=90
-      "
+    command: ["/app/docker/worker-entrypoint.sh"]
     user: "10001"
     read_only: true
     tmpfs:
@@ -85,10 +78,10 @@ services:
 
   scheduler:
     build:
-      context: ./backend
-      dockerfile: ../docker/backend.Dockerfile
+      context: .
+      dockerfile: ./docker/backend.Dockerfile
       target: production
-    command: php artisan schedule:work
+    command: ["/app/docker/scheduler-entrypoint.sh"]
     user: "10001"
     read_only: true
     tmpfs:
